@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { View, Text } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import React from 'react';
+import { View } from 'react-native';
+import SpotifyRanking from './SpotifyRanking';
 
-const Home = () => {
+const App = () => {
     return (
-        <View>
-            <Text>Frequency</Text>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <SpotifyRanking/>
         </View>
-    )
+    );
 }
 
-export default Home;
+export default App;
