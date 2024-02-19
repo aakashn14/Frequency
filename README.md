@@ -8,7 +8,7 @@ Use [`expo-router`](https://docs.expo.dev/router/introduction/) to build native 
 ```sh
 npm install
 ```
-
+*required*
 ```sh
 npx expo start
 ```
