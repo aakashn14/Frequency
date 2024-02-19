@@ -4,6 +4,11 @@ Use [`expo-router`](https://docs.expo.dev/router/introduction/) to build native 
 
 ## 🚀 How to use
 
+*optional but reccomended*
+```sh
+npm install
+```
+
 ```sh
 npx expo start
 ```
