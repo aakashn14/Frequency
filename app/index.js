@@ -1,6 +1,6 @@
-import React,{ useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, Link, useNavigation } from 'expo-router';
 
 import Logo from '../assets/images/frequency_logo/logo.js';
 import Twitter from '../assets/images/platform_logos/twitter.jsx';
@@ -9,9 +9,57 @@ import Facebook from '../assets/images/platform_logos/facebook.jsx';
 import Google from '../assets/images/platform_logos/google.jsx';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AsyncStorage } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Login = () => {
-    const router = useRouter();
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        const checkTokenValidity = async () => {
+            const accessToken = await AsyncStorage.getItem("token");
+            const expirationDate = await AsyncStorage.getItem("expirationDate");
+            console.log("access token", accessToken);
+            console.log("expiration date", expirationDate);
+            
+            if (accessToken && expirationDate) {
+                const currentTime = Date.now();
+                if (currentTime < parseInt(expirationDate)) {
+                    navigation.navigate("SpotifyRankings");
+                }
+                else {
+                    AsyncStorage.removeItem("token");
+                    AsyncStorage.removeItem("expirationDate");
+                }
+            }
+        }
+    },[])
+    async function authenticate () {
+        const config = {
+            issuer:"https://accounts.spotify.com",
+            client_id:"047f8ea696a0445abf64e1738a07ac71",
+            scopes: [
+                "user-read-email",
+                "user-library-read",
+                "user-read-recently-played",
+                "user-top-read",
+                "playlist-read-private",
+                "playlist-read-collaborative",
+                "playlist-modify-public"
+            ],
+            redirectURI:"exp://localhost:192.168.1.83:8081"
+        }
+        const result = await fetch(config);
+        console.log(result);
+        if (result.accessToken) {
+            console.log(accessToken);
+            const expirationDate = new Date(result.accessTokenExpirationDate).getTime();
+            AsyncStorage.setItem("token", result.accessToken);
+            AsyncStorage.setItem("expirationDate", expirationDate.toString());
+            navigation.navigate("SpotifyRankings");
+        }
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, justifyContent:'center'}}>
@@ -71,25 +119,26 @@ const Login = () => {
                         <Text style={{fontWeight:'700'}}>Forgot?</Text>
                     </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity 
-                    onPress={() => {}} 
-                    style={{
-                        backgroundColor:'#AD40AF',
-                        padding:20,
-                        borderRadius:10,
-                        marginBottom:30
-                    }}>
-                    <Text 
+                <Link href="/HomePage" asChild>
+                    <TouchableOpacity //h
+                        onPress={() => navigation.navigate('HomePage')}
                         style={{
-                            textAlign:'center',
-                            fontWeight:'700',
-                            fontSize:16,
-                            color:'#fff'
+                            backgroundColor:'#AD40AF',
+                            padding:20,
+                            borderRadius:10,
+                            marginBottom:30
                         }}>
-                        Login
-                    </Text>
-                </TouchableOpacity>
+                        <Text 
+                            style={{
+                                textAlign:'center',
+                                fontWeight:'700',
+                                fontSize:16,
+                                color:'#fff'
+                            }}>
+                            Login
+                        </Text>
+                    </TouchableOpacity>
+                </Link>
                 <Text 
                     style={{
                         textAlign:'center',
