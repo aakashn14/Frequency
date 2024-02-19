@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 
+const client_id = '047f8ea696a0445abf64e1738a07ac71'; //change this to test on your own spotify dev account
+const client_secret = 'd02b717f549c4ed29744df3059b7a342'; //change this to test on your own spotify dev account
+global.Buffer = require('buffer').Buffer;
+
 async function getAccessToken() {
     const authUrl = 'https://accounts.spotify.com/api/token';
-    const authData = {
-        grant_type: 'client_credentials',
-        client_id: '5045756bd41947178f68a4c85d561e9c',
-        client_secret: '2b578384dca54f4d9198f89296146711'
-    };
+    const credentials = Buffer.from(client_id + ':' + client_secret).toString('base64');
+    const bodyData = 'grant_type=client_credentials';
 
     try {
         const response = await fetch(authUrl, {
             method: 'POST',
             headers: {
+                'Authorization': `Basic ${credentials}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: new URLSearchParams(authData)
+            body: bodyData
         });
         const data = await response.json();
         return data.access_token;
@@ -27,12 +29,12 @@ async function getAccessToken() {
 
 async function searchTracks(accessToken, query) {
     const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`;
-    const headers = {
-        Authorization: `Bearer ${accessToken}`
-    };
-
     try {
-        const response = await fetch(searchUrl, {headers});
+        const response = await fetch(searchUrl, {
+            headers: { 
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
         const data = await response.json();
         console.log('Search API response:', data);
         return data.tracks.items;
@@ -42,19 +44,49 @@ async function searchTracks(accessToken, query) {
     }
 }
 
-//
+//artists
+async function searchArtists(accessToken, query) {
+    const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=artist`;
+    try {
+        const response = await fetch(searchUrl, {
+            headers: { 
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+        const data = await response.json();
+        console.log('Search Artist API response:', data);
+        return data.artists.items;
+    } catch(error) {
+        console.error('Error searching artists:', error);
+        return [];
+    }
+}
+
 const SpotifyRanking = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [trackSearchQuery, setTrackSearchQuery] = useState('');
+    const [artistSearchQuery, setArtistSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [selectedTracks, setSelectedTracks] = useState([]);
+    const [selectedArtists, setSelectedArtists] = useState([]);
 
-    const handleSearch = async () => {
+    const handleSearchTracks = async () => {
         try {
             const accessToken = await getAccessToken();
-            const results = await searchTracks(accessToken, searchQuery);
+            const results = await searchTracks(accessToken, trackSearchQuery);
             setSearchResults(results);
         } catch(error) {
             console.error('Error searching tracks:', error);
+        }
+    };
+
+    //artists
+    const handleSearchArtists = async () => {
+        try {
+            const accessToken = await getAccessToken();
+            const results = await searchArtists(accessToken, artistSearchQuery);
+            setSelectedArtists(results);
+        } catch(error) {
+            console.error('Error searching artists:', error);
         }
     };
 
@@ -67,16 +99,24 @@ const SpotifyRanking = () => {
     };
 
     return (
-        //Top album names and covers
         <View>
             <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>Search Tracks:</Text>
             <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10}}
                 placeholder="Enter track name"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
+                value={trackSearchQuery}
+                onChangeText={setTrackSearchQuery}
             />
-            <Button title="Search" onPress={handleSearch}/>
+            <Button title="Search Tracks" onPress={handleSearchTracks}/>
+
+            <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>Search Artists:</Text>
+            <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10}}
+                placeholder="Enter artist name"
+                value={artistSearchQuery}
+                onChangeText={setArtistSearchQuery}
+            />
+            <Button title="Search Artists" onPress={handleSearchArtists}/>
 
             <Text style={{fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 10}}>Selected Tracks:</Text>
             <FlatList
@@ -109,7 +149,19 @@ const SpotifyRanking = () => {
                     </TouchableOpacity>
                 )}
             />
+            
+            <Text style={{fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 10}}>Selected Artists:</Text>
+            <FlatList
+                data={selectedArtists}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => (
+                    <View style={{marginBottom: 10}}>
+                        <Text>{item.name}</Text>
+                    </View>
+                )}
+            />
         </View>
     );
 };
+
 export default SpotifyRanking;
