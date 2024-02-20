@@ -5,6 +5,7 @@ const client_id = '047f8ea696a0445abf64e1738a07ac71'; //change this to test on y
 const client_secret = 'd02b717f549c4ed29744df3059b7a342'; //change this to test on your own spotify dev account
 global.Buffer = require('buffer').Buffer;
 
+//getAccessToken(): retrieves an access token for requests from the Spotify API using necessary authentication data.
 async function getAccessToken() {
     const authUrl = 'https://accounts.spotify.com/api/token';
     const credentials = Buffer.from(client_id + ':' + client_secret).toString('base64');
@@ -27,6 +28,8 @@ async function getAccessToken() {
     }
 }
 
+/*searchTracks() and searchArtist(): searches for tracks and artists on Spotify by using the given query string to construct a search URL 
+and sending a request to the Spotify API with the access token to retrieve relevant search results.*/
 async function searchTracks(accessToken, query) {
     const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`;
     try {
@@ -44,7 +47,6 @@ async function searchTracks(accessToken, query) {
     }
 }
 
-//artists
 async function searchArtists(accessToken, query) {
     const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=artist`;
     try {
@@ -62,6 +64,7 @@ async function searchArtists(accessToken, query) {
     }
 }
 
+//SpotifyRanking: sets up states for managing search queries, search results, and selected tracks/artists.
 const SpotifyRanking = () => {
     const [trackSearchQuery, setTrackSearchQuery] = useState('');
     const [artistSearchQuery, setArtistSearchQuery] = useState('');
@@ -69,6 +72,7 @@ const SpotifyRanking = () => {
     const [selectedTracks, setSelectedTracks] = useState([]);
     const [selectedArtists, setSelectedArtists] = useState([]);
 
+    //handleSearchTracks() and handleSearchArtists(): calls searchTracks() and searchArtist() functions with the search queries.
     const handleSearchTracks = async () => {
         try {
             const accessToken = await getAccessToken();
@@ -79,7 +83,6 @@ const SpotifyRanking = () => {
         }
     };
 
-    //artists
     const handleSearchArtists = async () => {
         try {
             const accessToken = await getAccessToken();
@@ -90,6 +93,7 @@ const SpotifyRanking = () => {
         }
     };
 
+    //handleTrackSelection: adds user selected tracks to a list of up to 5 tracks.
     const handleTrackSelection = (track) => {
         if(selectedTracks.length < 5) {
             setSelectedTracks([...selectedTracks, track]);
@@ -98,6 +102,8 @@ const SpotifyRanking = () => {
         }
     };
 
+    /*Inside the return statement, there are UI components for inputting text, 
+    buttons to start searches, and lists for displaying search results and selected items.*/
     return (
         <View>
             <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>Search Tracks:</Text>
