@@ -9,7 +9,7 @@ import Google from '../assets/images/platform_logos/google.jsx';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Register = () => {
+const Login = () => {
     const navigation = useNavigation();
 
     return (
@@ -27,7 +27,7 @@ const Register = () => {
                     fontSize:28, fontWeight:'500',
                     color:'#333',marginBottom:30,
                     }}>
-                    Register
+                    Login
                 </Text>
 
                 <View 
@@ -66,9 +66,11 @@ const Register = () => {
                         style={{flex: 1, paddingVertical: 0}}
                         secureTextEntry={true}
                     />
+                    <TouchableOpacity onPress={() => {}}>
+                        <Text style={{fontWeight:'700'}}>Forgot?</Text>
+                    </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={() => navigation.replace('HomePage')}
                     style={{
                         backgroundColor:'#AD40AF',
@@ -83,7 +85,7 @@ const Register = () => {
                             fontSize:16,
                             color:'#fff'
                         }}>
-                        Register
+                        Login
                     </Text>
                 </TouchableOpacity>
                 <Text 
@@ -92,7 +94,7 @@ const Register = () => {
                         color:'#666',
                         marginBottom:30
                     }}>
-                    Or, register with...
+                    Or, login with...
                 </Text>
                 <View 
                     style={{
@@ -122,7 +124,7 @@ const Register = () => {
                             paddingVertical:10
                         }}>
                         <Google height={24} width={24} />
-                    </TouchableOpacity>                    
+                    </TouchableOpacity>
                     
                     <TouchableOpacity 
                         onPress={() => {}} 
@@ -155,14 +157,14 @@ const Register = () => {
                         justifyContent:'center',
                         marginBottom:30
                     }}>
-                    <Text>Already Registered? </Text>
-                    <TouchableOpacity onPress={() => navigation.replace('index')}>
+                    <Text>New to the app? </Text>
+                    <TouchableOpacity onPress={() => navigation.replace('register')}>
                         <Text 
                             style={{
                                 color:'#AD40AF',
                                 fontWeight:'700'
                             }}>
-                            Login
+                            Register
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -171,4 +173,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default Login;
