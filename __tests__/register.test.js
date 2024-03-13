@@ -5,7 +5,7 @@ import Register from '../app/register.js';
 
 describe('Register', () => {
     test('buttons render correctly', () => {
-    const { getByPlaceholderText, getByText } = render(<Register />);
+    const { getByPlaceholderText, getByText, getByTestId } = render(<Register />);
     
     // Check if the input fields and buttons are rendered correctly
     expect(getByPlaceholderText('Email ID')).toBeTruthy();
@@ -15,7 +15,7 @@ describe('Register', () => {
   });
 
   test('navigates to HomePage when Register button is pressed', () => {
-    const { getByText } = render(<Register />);
+    const { getByTestId } = render(<Register />);
     
     fireEvent.press(getByTestId('registerButton')); // Simulate button press
 

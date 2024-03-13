@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from 'expo-router';
 
-const backgroundImage = require('../assets/music4.avif'); // replaceable image
+const backgroundImage = require('../assets/images/music4.avif'); // replaceable image
 
 const Homepage = () => {
     const navigation = useNavigation();
