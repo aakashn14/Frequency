@@ -77,6 +77,7 @@ const Register = () => {
                         marginBottom:30
                     }}>
                     <Text 
+                        testID='registerButton'
                         style={{
                             textAlign:'center',
                             fontWeight:'700',
