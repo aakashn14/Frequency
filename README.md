@@ -7,8 +7,9 @@ To use jest:
 ```sh
 npm install jest --global
 npx expo install jest-expo jest
-npm install react-test-renderer@18.2.0
 npm install --save-dev @babel/core @babel/preset-env babel-jest
+npm install --save-dev @babel/preset-react-native
+
 npx jest
 ```
 

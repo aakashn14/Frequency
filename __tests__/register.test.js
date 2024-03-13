@@ -1,25 +1,35 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import Register from '../app/register.js';
 
 describe('Register', () => {
-    test('renders without crashing', () => {
-        render(<Register />);
-    });
+    test('renders correctly', () => {
+    const { getByPlaceholderText, getByText } = render(<Register />);
+    
+    // Check if the input fields and buttons are rendered correctly
+    expect(getByPlaceholderText('Email ID')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
+    expect(getByText('Register')).toBeTruthy();
+    expect(getByText('Already Registered?')).toBeTruthy();
+  });
 
-    test('allows typing in the email field', () => {
-        const { getByPlaceholderText } = render(<Register />);
-        const emailInput = getByPlaceholderText('Email ID');
-        fireEvent.changeText(emailInput, 'test@example.com');
-        expect(emailInput.props.value).toBe('test@example.com');
-    });
+  test('navigates to HomePage when Register button is pressed', () => {
+    const { getByText } = render(<Register />);
+    
+    fireEvent.press(getByText('Register')); // Simulate button press
 
-    test('allows typing in the password field', () => {
-        const { getByPlaceholderText } = render(<Register />);
-        const passwordInput = getByPlaceholderText('Password');
-        fireEvent.changeText(passwordInput, 'password123');
-        expect(passwordInput.props.value).toBe('password123');
-    });
+    // Expect the navigation.replace function to be called with 'HomePage' as an argument
+    expect(useNavigation().replace).toHaveBeenCalledWith('HomePage');
+  });
 
-    // Add more tests for interactions such as pressing the register button, etc.
+  test('navigates to Login page when "Already Registered?" is pressed', () => {
+    const { getByText } = render(<Register />);
+    
+    fireEvent.press(getByText('Login')); // Simulate button press
+
+    // Expect the navigation.replace function to be called with 'index' as an argument
+    expect(useNavigation().replace).toHaveBeenCalledWith('index');
+  });
+
 });
